@@ -12,6 +12,8 @@
  * 6. 双击托盘图标显示时间窗口,可复制格式化时间
  */
 
+
+//什么都没有做, 只是测试推送
 #include <QAction>
 #include <QApplication>
 #include <QClipboard>
