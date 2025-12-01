@@ -48,6 +48,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         addons/QHotkey/qhotkey.h
         addons/QHotkey/qhotkey_p.h
         addons/QHotkey/qhotkey_win.cpp
+        timewindow.h
     )
 
     # 添加 qhotkey 的头文件目录到 TimestampHotkey 的 include 路径
