@@ -11,20 +11,22 @@
  * 5. 以系统托盘方式运行,无主窗口界面
  */
 
-#include <QApplication>       // Qt应用程序主类
-#include <QSystemTrayIcon>    // 系统托盘图标
-#include <QMenu>              // 托盘右键菜单
-#include <QAction>            // 菜单动作项
-#include <QClipboard>         // 剪贴板操作
-#include <QDateTime>          // 日期时间处理
-#include <QTimer>             // 定时器,用于延迟执行
-#include <QMessageBox>        // 消息对话框
-#include <QDebug>             // 调试输出
-#include <QPixmap>            // 图像处理
-#include <QColor>             // 颜色定义
-#include <QIcon>              // 图标
-#include <qhotkey.h>          // 第三方全局热键库
-#include <windows.h>          // Windows API,用于模拟键盘输入
+// Git测试
+
+#include <QAction>         // 菜单动作项
+#include <QApplication>    // Qt应用程序主类
+#include <QClipboard>      // 剪贴板操作
+#include <QColor>          // 颜色定义
+#include <QDateTime>       // 日期时间处理
+#include <QDebug>          // 调试输出
+#include <QIcon>           // 图标
+#include <QMenu>           // 托盘右键菜单
+#include <QMessageBox>     // 消息对话框
+#include <QPixmap>         // 图像处理
+#include <QSystemTrayIcon> // 系统托盘图标
+#include <QTimer>          // 定时器,用于延迟执行
+#include <qhotkey.h>       // 第三方全局热键库
+#include <windows.h>       // Windows API,用于模拟键盘输入
 
 /**
  * 发送组合键(按下modifier + key,然后释放)
@@ -45,10 +47,11 @@
  *
  * 每个操作之间都有10ms延迟,确保键盘事件被正确处理
  */
-void sendKeyCombo(BYTE modifier, BYTE key) {
+void sendKeyCombo(BYTE modifier, BYTE key)
+{
     // 按下修饰键(不释放)
     keybd_event(modifier, 0, 0, 0);
-    Sleep(10);  // 等待10ms,让系统识别按键
+    Sleep(10); // 等待10ms,让系统识别按键
 
     // 按下主键
     keybd_event(key, 0, 0, 0);
@@ -62,25 +65,21 @@ void sendKeyCombo(BYTE modifier, BYTE key) {
     keybd_event(modifier, 0, KEYEVENTF_KEYUP, 0);
 }
 
-
-
-
-
-
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     // 创建Qt应用程序实例
     QApplication app(argc, argv);
 
     // ========== 应用程序基本信息设置 ==========
-    app.setApplicationName("TimestampHotkey");     // 应用名称
-    app.setApplicationVersion("1.0");              // 版本号
-    app.setQuitOnLastWindowClosed(false);          // 关闭所有窗口时不退出程序(托盘程序需要)
+    app.setApplicationName("TimestampHotkey"); // 应用名称
+    app.setApplicationVersion("1.0");          // 版本号
+    app.setQuitOnLastWindowClosed(false);      // 关闭所有窗口时不退出程序(托盘程序需要)
 
     // ========== 检查系统托盘支持 ==========
     // 部分系统可能不支持托盘图标功能
     if (!QSystemTrayIcon::isSystemTrayAvailable()) {
         QMessageBox::critical(nullptr, "错误", "系统不支持托盘图标功能!");
-        return 1;  // 返回错误码
+        return 1; // 返回错误码
     }
 
     // ========== 创建系统托盘图标 ==========
@@ -88,7 +87,7 @@ int main(int argc, char *argv[]) {
 
     // 创建一个32x32像素的纯色图标(钢蓝色)
     QPixmap pixmap(32, 32);
-    pixmap.fill(QColor(70, 130, 180));  // RGB: 钢蓝色
+    pixmap.fill(QColor(70, 130, 180)); // RGB: 钢蓝色
     trayIcon.setIcon(QIcon(pixmap));
 
     // 设置托盘图标的悬停提示文本
@@ -102,7 +101,7 @@ int main(int argc, char *argv[]) {
 
     // 添加状态显示项(禁用状态,仅显示信息)
     QAction *statusAction = trayMenu.addAction("状态: 监听中");
-    statusAction->setEnabled(false);  // 禁用点击
+    statusAction->setEnabled(false); // 禁用点击
 
     // 添加分隔线
     trayMenu.addSeparator();
@@ -119,16 +118,8 @@ int main(int argc, char *argv[]) {
     // ========== 显示程序启动通知 ==========
     trayIcon.showMessage("程序已启动",
                          "按  Ctrl+` 生成时间戳\n右键托盘图标查看菜单",
-                         QSystemTrayIcon::Information,  // 信息类型图标
-                         3000);  // 显示3秒
-
-
-
-
-
-
-
-
+                         QSystemTrayIcon::Information, // 信息类型图标
+                         3000);                        // 显示3秒
 
     // ========== 注册全局热键 Ctrl+` ==========
     // QHotkey参数说明:
@@ -143,14 +134,12 @@ int main(int argc, char *argv[]) {
     } else {
         qDebug() << "全局热键注册失败!";
         // 热键可能被其他程序占用
-        QMessageBox::warning(nullptr, "警告",
-                             "热键  Ctrl+` 注册失败!\n可能已被其他程序占用。");
+        QMessageBox::warning(nullptr, "警告", "热键  Ctrl+` 注册失败!\n可能已被其他程序占用。");
     }
 
     // ========== 连接热键触发事件 ==========
     // 当用户按下 Ctrl+` 时,执行以下lambda函数
     QObject::connect(hotkey, &QHotkey::activated, [&trayIcon]() {
-
         // ===== 步骤1: 生成时间戳 =====
         // 获取当前系统时间
         QDateTime now = QDateTime::currentDateTime();
@@ -173,18 +162,11 @@ int main(int argc, char *argv[]) {
         clipboard->setText(timestamp);
         qDebug() << "时间戳已复制到剪贴板";
 
-
-
-
-
-
-
-
         // ===== 步骤3: 延迟125ms后发送 Ctrl+V (粘贴) =====
         // 使用QTimer::singleShot创建单次定时器
         // 延迟是为了确保剪贴板内容已更新
         QTimer::singleShot(125, []() {
-            sendKeyCombo(VK_CONTROL, 'V');  // 模拟按下Ctrl+V
+            sendKeyCombo(VK_CONTROL, 'V'); // 模拟按下Ctrl+V
             qDebug() << "发送 Ctrl+V (125ms)";
         });
 
@@ -202,18 +184,11 @@ int main(int argc, char *argv[]) {
             qDebug() << "发送 Ctrl+C (375ms)";
         });
 
-
-
-
-
-
-
-
         // ===== 显示托盘通知 =====
         trayIcon.showMessage("时间戳已生成",
                              timestamp,
                              QSystemTrayIcon::Information,
-                             1000);  // 显示1秒
+                             1000); // 显示1秒
     });
 
     // ========== 关于对话框 ==========
@@ -232,7 +207,8 @@ int main(int argc, char *argv[]) {
 
     // ========== 双击托盘图标显示关于 ==========
     // 监听托盘图标的激活事件
-    QObject::connect(&trayIcon, &QSystemTrayIcon::activated,
+    QObject::connect(&trayIcon,
+                     &QSystemTrayIcon::activated,
                      [aboutAction](QSystemTrayIcon::ActivationReason reason) {
                          // 如果是双击事件
                          if (reason == QSystemTrayIcon::DoubleClick) {
@@ -252,13 +228,6 @@ int main(int argc, char *argv[]) {
     // 直到调用 QApplication::quit() 才会退出
     return app.exec();
 }
-
-
-
-
-
-
-
 
 /*
  * ========== 原始代码(已注释) ==========
