@@ -2,3 +2,4 @@
 #include "4GIM4TCJFU/moc_qhotkey.cpp"
 #include "4GIM4TCJFU/moc_qhotkey_p.cpp"
 #include "EWIEGA46WW/moc_mainwindow.cpp"
+#include "EWIEGA46WW/moc_timewindow.cpp"
